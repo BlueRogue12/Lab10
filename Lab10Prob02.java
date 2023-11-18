@@ -4,8 +4,8 @@
  * Class: CSCI 1302 
  * Author: Sydney Boles, Michael Aaron, and Lana Marin
  * Created on: November 17, 2023
- * Last modified: November 17, 2023 
- * Description: Input and output sorted data using ArrayList
+ * Last modified: November 18, 2023 
+ * Description: Input and output utilizing ArrayList and a Person class
  */
 
 import java.io.*;
@@ -30,25 +30,38 @@ public class Lab10Prob02 {
 				String address = input.readUTF();
 				int zipCode = input.readInt();
 				double salary = input.readDouble();
-				Person person = new Person(age, name, address, zipCode, salary);
-				people.add(person);
-				Collections.sort(people);
 				System.out.printf("%s %d %s %d %.2f%n", name, age, address, zipCode, salary);
 
-				output.writeInt(age);
 				output.writeUTF(name);
+				output.writeInt(age);
 				output.writeUTF(address);
 				output.writeInt(zipCode);
 				output.writeDouble(salary);
+				people.add(new Person(name, age, address, zipCode, salary));
+
 			}
 
 		} catch (EOFException e) {
+
+		} catch (Exception e) {
+
 		}
 
+		Collections.sort(people);
+
+		try (DataOutputStream output = new DataOutputStream(
+				new BufferedOutputStream(new FileOutputStream("src/people-salary-sorted.dat")));) {
+
+			for (Person personsList : people) {
+				output.writeUTF(personsList.toString());
+			}
+		} catch (Exception e) {
+
+		}
 	}
 }
 
-class Person {
+class Person implements Comparable<Person> {
 
 	// Data fields
 	private int age;
@@ -63,10 +76,10 @@ class Person {
 	}
 
 	// Convenience constructor
-	public Person(int age, String name, String address, int zipCode, double salary) {
+	public Person(String name, int age, String address, int zipCode, double salary) {
 		this();
-		setAge(age);
 		setName(name);
+		setAge(age);
 		setAddress(address);
 		setZipCode(zipCode);
 		setSalary(salary);
@@ -116,11 +129,12 @@ class Person {
 
 	// toString method
 	public String toString() {
-		return String.format("%s %d %s %d $%,.2f%n", getName(), getAge(), getAddress(), getZipCode(), getSalary());
+		return String.format("%d %s %s %d $%,.2f", getAge(), getName(), getAddress(), getZipCode(), getSalary());
 
 	}
 
 	// CompareTo() Method
+	@Override
 	public int compareTo(Person otherSalary) {
 		if (this.salary < otherSalary.salary) {
 			return 1;
