@@ -1,0 +1,42 @@
+
+/**
+ * File: Lab 10
+ * Class: CSCI 1302 
+ * Author: Sydney Boles, Michael Aaron, and Lana Marin
+ * Created on: November 17, 2023
+ * Last modified: November 17, 2023 
+ * Description: Input and output exact data into new file
+ */
+
+import java.io.*;
+
+public class Lab10Prob01 {
+	public static void main(String[] args) throws FileNotFoundException, IOException {
+
+		// Try with resources for input and output
+		try (DataInputStream input = new DataInputStream(
+				new BufferedInputStream(new FileInputStream("src/people.dat")));
+				DataOutputStream output = new DataOutputStream(
+						new BufferedOutputStream(new FileOutputStream("src/people-copy.dat")));) {
+
+			// Input file and display to console, then output to a new file
+			while (true) {
+				int age = input.readInt();
+				String name = input.readUTF();
+				String address = input.readUTF();
+				int zipCode = input.readInt();
+				double salary = input.readDouble();
+				System.out.printf("%s %d %s %d %.2f%n", name, age, address, zipCode, salary);
+			
+				output.writeInt(age);
+				output.writeUTF(name);
+				output.writeUTF(address);
+				output.writeInt(zipCode);
+				output.writeDouble(salary);
+			}
+
+		} catch (EOFException e) {
+		}
+
+	}
+}
